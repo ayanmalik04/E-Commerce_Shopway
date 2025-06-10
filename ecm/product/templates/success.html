@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <style>
+        .payment-success-container {
+            text-align: center;
+            margin: 80px auto;
+            padding: 40px;
+            background-color: #f4fff5;
+            border: 2px solid #d4edda;
+            border-radius: 12px;
+            max-width: 500px;
+            box-shadow: 0 4px 12px rgba(0, 128, 0, 0.1);
+        }
+
+        .payment-success-title {
+            color: #28a745;
+            font-size: 32px;
+            margin-bottom: 24px;
+            font-weight: bold;
+        }
+
+        .view-orders-button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 14px 28px;
+            font-size: 18px;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .view-orders-button:hover {
+            background-color: #0056b3;
+        }
+
+        .view-orders-button i {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container text-center my-5">
+        <h2 class="text-success mb-4">Payment Successful!</h2>
+
+        <a href="{% url 'confirmorder' order_id %}" class="btn btn-primary btn-lg">
+            <i class="fas fa-receipt me-2"></i> View Orders
+        </a>
+    </div>
+</body>
+
+</html>

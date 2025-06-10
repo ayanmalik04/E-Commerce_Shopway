@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Report</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <h1>Sales Report Grouped by {{ label }}</h1>
+
+    <form method="get" action="">
+        <label>Group by:
+            <select name="group_by" onchange="this.form.submit()">
+                <option value="date" {% if group_by == 'date' %}selected{% endif %}>Date</option>
+                <option value="week" {% if group_by == 'week' %}selected{% endif %}>Week</option>
+                <option value="year" {% if group_by == 'year' %}selected{% endif %}>Year</option>
+            </select>
+        </label>
+        <button type="submit" name="export" value="csv">Export CSV</button>
+    </form>
+
+    <canvas id="salesChart" height="100"></canvas>
+
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>{{ label }}</th>
+                <th>Product ID</th>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Category</th>
+                <th>Total Quantity Sold</th>
+                <th>Total Sales</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in sales_data %}
+            <tr>
+                <td>
+                    {% if group_by == 'year' %}
+                        {{ item.period|date:"Y" }}
+                    {% elif group_by == 'week' %}
+                        Week of {{ item.period|date:"Y-m-d" }}
+                    {% else %}
+                        {{ item.period|date:"Y-m-d" }}
+                    {% endif %}
+                </td>
+                <td>{{ item.product__id }}</td>
+                <td>{{ item.product__pname }}</td>
+                <td>{{ item.product__pbrand }}</td>
+                <td>{{ item.product__category }}</td>
+                <td>{{ item.total_quantity }}</td>
+                <td>₹{{ item.total_sales }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No sales data found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div style="margin-top: 20px;">
+        {% if sales_data.has_previous %}
+            <a href="?group_by={{ group_by }}&page={{ sales_data.previous_page_number }}">Previous</a>
+        {% endif %}
+
+        Page {{ sales_data.number }} of {{ sales_data.paginator.num_pages }}
+
+        {% if sales_data.has_next %}
+            <a href="?group_by={{ group_by }}&page={{ sales_data.next_page_number }}">Next</a>
+        {% endif %}
+    </div>
+
+    
+
+</body>
+</html>

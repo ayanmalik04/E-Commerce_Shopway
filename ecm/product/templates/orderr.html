@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Receipt</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f3f6fa;
+      padding: 20px 10px;
+      margin: 0;
+    }
+
+    .receipt-wrapper {
+      max-width: 1000px;
+      margin: auto;
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px 20px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    .receipt-header {
+      text-align: center;
+      color: #2e7d32;
+      font-size: 2rem;
+      margin-bottom: 30px;
+      font-weight: bold;
+    }
+
+    .order-item {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    .order-item img {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      flex-shrink: 0;
+    }
+
+    .product-details {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .product-details h4 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    .product-details p {
+      margin: 2px 0;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .user-info {
+      background: #f1f8ff;
+      border-left: 5px solid #2196f3;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-top: 25px;
+    }
+
+    .user-info h5 {
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+      color: #0d47a1;
+    }
+
+    .user-info p {
+      margin: 5px 0;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .order-summary {
+      text-align: right;
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-top: 25px;
+      color: #444;
+    }
+
+    button {
+      background-color: #d32f2f;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #b71c1c;
+    }
+
+    .center-btn {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .center-btn a {
+      background-color: #ff9800;
+      padding: 12px 28px;
+      border-radius: 6px;
+      color: white;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .center-btn a:hover {
+      background-color: #e68900;
+    }
+
+    .history-section {
+      margin-top: 50px;
+    }
+
+    .history-header {
+      text-align: center;
+      font-size: 1.6rem;
+      color: #37474f;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    .history-container {
+      max-height: 350px;
+      overflow-y: auto;
+      padding-right: 10px;
+    }
+
+    .history-card {
+      background: #fafafa;
+      padding: 15px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border-left: 4px solid #2196f3;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .history-card p {
+      margin: 6px 0;
+      font-size: 0.9rem;
+      color: #333;
+    }
+
+    .history-card a {
+      color: #1976d2;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .history-card a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      .order-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .order-item img {
+        width: 40%;
+        height: auto;
+        margin-bottom: 10px;
+      }
+
+      .product-details h4 {
+        font-size: 1rem;
+      }
+
+      .product-details p,
+      .user-info p {
+        font-size: 0.85rem;
+      }
+
+      .receipt-header {
+        font-size: 1.6rem;
+      }
+
+      .order-summary {
+        font-size: 1rem;
+        text-align: left;
+      }
+
+      .center-btn a {
+        width: 70%;
+        display: inline-block;
+      }
+
+      .history-container {
+        max-height: 300px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="receipt-wrapper">
+    <div class="receipt-header">View Order</div>
+
+    {% for item in items %}
+    <div class="order-item">
+      <img src="{{ item.product_img.url }}" alt="Product Image" />
+      <div class="product-details">
+        <h4>{{ item.product_name }}</h4>
+        <p><strong>Brand:</strong> {{ item.product_brand }}</p>
+        <p><strong>Quantity:</strong> {{ item.quantity }}</p>
+        <p><strong>Unit Price:</strong> ₹{{ item.unit_price }}</p>
+        <p><strong>Total:</strong> ₹{{ item.total }}</p>
+      </div>
+    </div>
+    {% endfor %}
+
+    <div class="user-info">
+      <h5>Order Information</h5>
+      <p><strong>Order ID:</strong> {{ confirmation.order_id }}</p>
+      <p><strong>Payment ID:</strong> {{ confirmation.payment_id }}</p>
+      <p><strong>Status:</strong> {{ confirmation.status }}</p>
+      <p><strong>Delivery Status:</strong>
+        {% if order.is_return_approved %}
+        🔄 Returned
+        {% elif order.delivery_status == "Delivered" %}
+        ✅ Delivered
+        {% else %}
+        ❌ Not Yet Delivered
+        {% endif %}
+      </p>
+      <p><strong>Total Paid:</strong> ₹{{ order.total_price }}</p>
+      <p><strong>User:</strong> {{ user.username }}</p>
+    </div>
+
+    <div class="order-summary">
+      Grand Total: ₹{{ order.total_price }}
+    </div>
+
+    <!-- Return Section -->
+    <div class="center-btn">
+      {% if order.delivery_status == "Delivered" and not order.is_return_requested %}
+      <form method="post" action="{% url 'request_return' order.id %}">
+        {% csrf_token %}
+        <button type="submit">Request Return</button>
+      </form>
+      {% elif order.is_return_requested and not order.is_return_approved %}
+      <p style="color: #f57c00;">⏳ Return Requested - Awaiting Approval</p>
+      {% elif order.is_return_approved %}
+      <p style="color: green;">✅ Return Approved</p>
+      {% endif %}
+    </div>
+
+    <div class="center-btn">
+      <a href="{% url 'dashboard' %}">Go to Shop</a>
+    </div>
+
+    <!-- Order History Section -->
+    <div class="history-section">
+      <div class="history-header">Your Delivered Order History</div>
+      <div class="history-container">
+        {% if order_history %}
+        {% for past_order in order_history %}
+        <div class="history-card">
+          <p><strong>Order ID:</strong> {{ past_order.payment.order_id }}</p>
+          <p><strong>Total Paid:</strong> ₹{{ past_order.total_price }}</p>
+          <p><strong>Status:</strong>
+            {% if past_order.is_return_approved %}
+            🔄 Returned
+            {% elif past_order.delivery_status == "Delivered" %}
+            ✅ Delivered
+            {% else %}
+            ❌ Not Yet Delivered
+            {% endif %}
+          </p>
+          <p><a href="{% url 'orderr' past_order.payment.id %}">View Details</a></p>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p style="text-align: center;">You have no past delivered orders.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

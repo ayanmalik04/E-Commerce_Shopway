@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shopping Cart</title>
+
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .cart-container {
+            max-width: 1140px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            font-weight: 700;
+            color: #212529;
+        }
+
+        .table thead th {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .table td,
+        .table th {
+            vertical-align: middle;
+        }
+
+        .btn-outline-danger,
+        .btn-outline-success {
+            width: 38px;
+            height: 38px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .btn-outline-success:hover {
+            background-color: #198754;
+            color: #fff;
+        }
+
+        .cart-item {
+            background: #f1f3f5;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .address-details {
+            margin-top: 40px;
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 15px;
+            color: #495057;
+        }
+
+        .address-details p {
+            margin: 4px 0;
+        }
+
+        .total-section {
+            background-color: #ffffff;
+            border: 2px solid #0d6efd;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 40px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        }
+
+        .total-section h4 {
+            font-size: 1.6rem;
+            color: #0d6efd;
+        }
+
+        .product-suggestion {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 10px;
+            width: 160px;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+
+        .product-suggestion img {
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .cart-table {
+                display: none;
+            }
+
+            .cart-item img {
+                width: 100px;
+                margin-bottom: 12px;
+            }
+
+            .total-section .btn {
+                width: 100%;
+                margin-bottom: 12px;
+            }
+
+            .product-suggestion {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container cart-container">
+        <h2 class="text-center mb-5">🛒 Your Shopping Cart</h2>
+
+        {% if cart_items %}
+        <!-- Desktop View -->
+        <div class="table-responsive cart-table d-none d-md-block">
+            <table class="table table-hover align-middle text-center">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Product</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Subtotal</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in cart_items %}
+                    <tr>
+                        <td><img src="{{ item.product.pimg.url }}" width="60" class="rounded"></td>
+                        <td>{{ item.product.pname }}</td>
+                        <td>₹{{ item.product.pprice }}</td>
+                        <td>
+                            <form action="{% url 'update_cart' item.product.id %}" method="POST" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="decrease" class="btn btn-outline-danger">-</button>
+                            </form>
+                            <span class="mx-2">{{ item.quantity }}</span>
+                            <form action="{% url 'update_cart' item.product.id %}" method="POST" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="increase" class="btn btn-outline-success">+</button>
+                            </form>
+                        </td>
+                        <td><strong class="text-primary">₹{{ item.subtotal }}</strong></td>
+                        <td><a href="{% url 'remove_from_cart' item.product.id %}" class="btn btn-danger btn-sm">🗑</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Mobile View -->
+        <div class="d-md-none">
+            {% for item in cart_items %}
+            <div class="cart-item">
+                <img src="{{ item.product.pimg.url }}" alt="{{ item.product.pname }}">
+                <h5 class="mt-2">{{ item.product.pname }}</h5>
+                <p class="text-success mb-1">₹{{ item.product.pprice }}</p>
+                <div class="d-flex justify-content-center gap-3 align-items-center mb-2">
+                    <form action="{% url 'update_cart' item.product.id %}" method="POST">{% csrf_token %}
+                        <button type="submit" name="action" value="decrease" class="btn btn-outline-danger">-</button>
+                    </form>
+                    <span class="fw-bold">{{ item.quantity }}</span>
+                    <form action="{% url 'update_cart' item.product.id %}" method="POST">{% csrf_token %}
+                        <button type="submit" name="action" value="increase" class="btn btn-outline-success">+</button>
+                    </form>
+                </div>
+                <p class="text-primary fw-bold">Subtotal: ₹{{ item.subtotal }}</p>
+                <a href="{% url 'remove_from_cart' item.product.id %}" class="btn btn-sm btn-danger">🗑 Remove</a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Total and Recommendations -->
+        <div class="total-section mt-5 text-center">
+            <h4>Total: ₹{{ total_price }}</h4>
+
+            <h5 class="mt-4">🔍 Products Similar to Your Cart</h5>
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-2">
+                {% for p in similar_products %}
+                <div class="product-suggestion">
+                    <img src="{{ p.pimg.url }}" width="100" height="100">
+                    <div class="mt-2 fw-bold">{{ p.pname }}</div>
+                    <div>₹{{ p.pprice }}</div>
+                    <form action="{% url 'add_to_cart' p.id %}" method="post" class="mt-1">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-outline-primary">Add to Cart</button>
+                    </form>
+                </div>
+                {% empty %}
+                <p>No similar products found.</p>
+                {% endfor %}
+            </div>
+
+            <h5 class="mt-5">📦 More from Same Category</h5>
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-2">
+                {% for p in smart_category_products %}
+                <div class="product-suggestion">
+                    <img src="{{ p.pimg.url }}" width="100" height="100">
+                    <div class="mt-2 fw-bold">{{ p.pname }}</div>
+                    <div>₹{{ p.pprice }}</div>
+                    <form action="{% url 'add_to_cart' p.id %}" method="post" class="mt-1">
+                        {% csrf_token %}
+                        <button class="btn btn-sm btn-outline-primary">Add to Cart</button>
+                    </form>
+                </div>
+                {% empty %}
+                <p>No category-based suggestions found.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Address -->
+            <div class="address-details mt-5 text-start">
+                <strong>Shipping Address:</strong>
+                {% if user.address_line1 %}<p>{{ user.address_line1 }}</p>{% endif %}
+                {% if user.address_line2 %}<p>{{ user.address_line2 }}</p>{% endif %}
+                {% if user.city or user.state %}<p>{{ user.city }}{% if user.city and user.state %}, {% endif %}{{ user.state }}</p>{% endif %}
+                {% if user.pincode %}<p>Pincode: {{ user.pincode }}</p>{% endif %}
+                {% if user.region %}<p>Region: {{ user.region }}</p>{% endif %}
+            </div>
+
+            <!-- Actions -->
+            <div class="mt-4 d-flex flex-column flex-md-row justify-content-center gap-3">
+                <a href="{% url 'update_address' %}" class="btn btn-warning">Update Address</a>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-dark">⬅ Back to Shop</a>
+                {% if user.address_line1 and user.city and user.state and user.pincode %}
+                <a href="{% url 'homes' %}" class="btn btn-success">Pay Now</a>
+                {% else %}
+                <span class="text-danger fw-bold mt-2">Please complete your address to proceed.</span>
+                {% endif %}
+            </div>
+        </div>
+
+        {% else %}
+        <!-- Empty Cart -->
+        <div class="text-center mt-5">
+            <img src="https://cdn-icons-png.flaticon.com/512/1170/1170576.png" width="120" class="mb-3">
+            <h4 class="text-muted">Your cart is empty 🛒</h4>
+            <a href="{% url 'dashboard' %}" class="btn btn-primary mt-3">Shop Now</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

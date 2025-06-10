@@ -1,0 +1,212 @@
+{% include 'header.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .search-box {
+            border-radius: 30px;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            transition: 0.3s;
+        }
+
+        .search-box:focus {
+            box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.5);
+            border-color: #007bff;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: white;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .card img {
+            height: 220px;
+            object-fit: contain;
+            background-color: #f1f1f1;
+            transition: 0.3s;
+        }
+
+        .card img:hover {
+            opacity: 0.8;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+        }
+
+        .btn-primary,
+        .btn-outline-primary {
+            transition: all 0.3s ease-in-out;
+            border-radius: 25px;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #0d6efd;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .category-bar .btn {
+            border-radius: 50px;
+            margin: 5px;
+            padding: 8px 20px;
+        }
+
+        .category-bar .active {
+            color: #0d0d0e;
+            background-color: #0d6efd;
+        }
+
+        @media (max-width: 576px) {
+            .search-box {
+                width: 100% !important;
+                margin-bottom: 10px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .card img {
+                height: 160px;
+            }
+
+            .category-bar .btn-group {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                /* center buttons */
+                gap: 0.5rem;
+                /* space between buttons */
+            }
+
+            .category-bar .btn {
+                flex: 1 1 auto;
+                /* let buttons grow and shrink */
+                min-width: 100px;
+                /* minimum width so buttons don't get too small */
+                white-space: nowrap;
+                /* prevent text wrap */
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <h2 class="text-center mb-4 fw-bold text-primary">Shop</h2>
+
+        <!-- Category Filter -->
+        <div class="text-center mb-4 category-bar">
+            <div class="btn-group flex-wrap" role="group">
+                <a href="{% url 'dashboard' %}?{% if query %}q={{ query }}&{% endif %}"
+                    class="btn btn-outline-primary {% if not selected_category %}active{% endif %}">All</a>
+
+                <a href="?category=Watches{% if query %}&q={{ query }}{% endif %}"
+                    class="btn btn-outline-primary {% if selected_category == 'Watches' %}active{% endif %}">Watches</a>
+
+                <a href="?category=Shoes{% if query %}&q={{ query }}{% endif %}"
+                    class="btn btn-outline-primary {% if selected_category == 'Shoes' %}active{% endif %}">Shoes</a>
+
+                <a href="?category=Electronics{% if query %}&q={{ query }}{% endif %}"
+                    class="btn btn-outline-primary {% if selected_category == 'Electronics' %}active{% endif %}">Electronics</a>
+
+                <a href="?category=Clothing{% if query %}&q={{ query }}{% endif %}"
+                    class="btn btn-outline-primary {% if selected_category == 'Clothing' %}active{% endif %}">Clothing</a>
+
+                <a href="?category=Groceries{% if query %}&q={{ query }}{% endif %}"
+                    class="btn btn-outline-primary {% if selected_category == 'Groceries' %}active{% endif %}">Groceries</a>
+            </div>
+        </div>
+
+        <!-- Search Form -->
+        <form method="GET" action="{% url 'dashboard' %}" id="search-form"
+            class="d-flex justify-content-center mb-4 flex-wrap">
+            <input type="text" class="form-control search-box w-50 me-2" name="q" id="search-box"
+                placeholder="Search products..." value="{{ query }}">
+            {% if selected_category %}
+            <input type="hidden" name="category" value="{{ selected_category }}">
+            {% endif %}
+            <button type="submit" class="btn btn-primary px-4">Search</button>
+        </form>
+
+        <!-- Product Grid -->
+        <div class="row">
+            {% for i in p %}
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4 animate__animated animate__fadeIn">
+                <div class="card shadow-sm">
+                    <a href="{% url 'product_detail' i.id %}" class="text-decoration-none">
+                        <img src="{{ i.pimg.url }}" alt="Product Image" class="card-img-top p-3">
+                    </a>
+                    <div class="card-body text-center">
+                        <h5 class="card-title" title="{{ i.pname }}">
+                            <a href="{% url 'product_detail' i.id %}" class="text-dark fw-bold text-decoration-none">
+                                {{ i.pname|truncatechars:25 }}
+                            </a>
+                        </h5>
+                        <p class="card-text"><strong>Price:</strong> ₹{{ i.pprice }}</p>
+                        <a href="{% url 'product_detail' i.id %}" class="btn btn-outline-primary w-100">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-center text-danger fw-bold">No products found.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Search Auto-Reset Script -->
+    <script>
+        document.getElementById("search-box").addEventListener("input", function () {
+            if (this.value.trim() === "") {
+                const urlParams = new URLSearchParams(window.location.search);
+                urlParams.delete("q");
+                window.location.search = urlParams.toString();
+            }
+        });
+    </script>
+
+</body>
+
+</html>
+{% include 'footer.html' %}

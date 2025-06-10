@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Order Receipt</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #eef2f7;
+            padding: 40px;
+            margin: 0;
+        }
+
+        .receipt-box {
+            background: #ffffff;
+            max-width: 720px;
+            margin: auto;
+            padding: 35px 45px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 35px;
+            color: #0066cc;
+            font-size: 2rem;
+        }
+
+        .info-box {
+            padding: 20px;
+            background-color: #eaf4ff;
+            border-radius: 10px;
+            border-left: 5px solid #007acc;
+            margin-bottom: 30px;
+        }
+
+        .info-box p {
+            margin: 8px 0;
+            font-size: 15px;
+            color: #444;
+        }
+
+        .info-box p strong {
+            color: #000;
+            width: 140px;
+            display: inline-block;
+        }
+
+        .receipt-line {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .receipt-line p {
+            margin: 0;
+            font-size: 15px;
+            color: #555;
+        }
+
+        .receipt-line p strong {
+            color: #000;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .status-cod {
+            color: #27ae60;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 14px;
+        }
+
+        thead {
+            background-color: #007acc;
+            color: #fff;
+        }
+
+        th,
+        td {
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1faff;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .total-summary {
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: right;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .address-details {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #fff3e0;
+            border-radius: 10px;
+            border-left: 5px solid #ff9800;
+        }
+
+        .address-details p {
+            margin: 6px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .address-details p strong {
+            color: #000;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #777;
+            margin-top: 40px;
+        }
+
+        a button {
+            margin-top: 25px;
+            padding: 10px 25px;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        a button:hover {
+            background-color: #e68900;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="receipt-box">
+        <h2>Order Receipt</h2>
+
+        <div class="info-box">
+            <div class="receipt-line">
+                <p><strong>Name:</strong> {{ user.username }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Mobile:</strong> {{ user.mobile }}</p>
+            </div>
+            <div class="receipt-line">
+                <p><strong>Order ID:</strong> {{ confirmation.order_id }}</p>
+                <p><strong>Payment Status:</strong>
+                    <span class="status {% if payment.status == 'COD' %}status-cod{% endif %}">
+                        {{ confirmation.status }}
+                    </span>
+                </p>
+            </div>
+            <div class="receipt-line">
+                <p><strong>Total Amount:</strong> {{ order.total_price }} Rs</p>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Brand</th>
+                    <th>Quantity</th>
+                    <th>Unit Price (Rs)</th>
+                    <th class="text-right">Total (Rs)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in line_items %}
+                <tr>
+                    <td>{{ item.product_name }}</td>
+                    <td>{{ item.product_brand }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.unit_price }} Rs</td>
+                    <td class="text-right">{{ item.total }} Rs</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="total-summary">
+            Balance Due: {{ order.total_price }} Rs
+        </div>
+
+        <div class="address-details">
+            <p><strong>Shipping Address:</strong></p>
+            {% if user.address_line1 %}<p>{{ user.address_line1 }}</p>{% endif %}
+            {% if user.address_line2 %}<p>{{ user.address_line2 }}</p>{% endif %}
+            {% if user.city or user.state %}
+            <p>{{ user.city }}{% if user.city and user.state %}, {% endif %}{{ user.state }}</p>
+            {% endif %}
+            {% if user.pincode %}<p>Pincode: {{ user.pincode }}</p>{% endif %}
+        </div>
+
+        <div class="footer">
+            Thank you for your order! This is a system-generated receipt.
+        </div>
+
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Razorpay Payment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .payment-container {
+            background: #ffffff;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            width: 100%;
+            max-width: 420px;
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #F37254;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #e05c43;
+        }
+
+        .btn-secondary {
+            background-color: #343a40;
+            color: #fff;
+            margin-top: 20px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #23272b;
+        }
+
+        /* Styling for the Razorpay Button */
+        .razorpay-button-container {
+            width: 100% !important; /* Ensure the container takes full width */
+            padding: 14px 0;
+            box-sizing: border-box;
+            margin-top: 15px;
+        }
+
+        /* Full Width Razorpay Button (Override styling) */
+        .razorpay-payment-button {
+            width: 100% !important; /* Ensures the Razorpay button is full-width */
+            height: 50px !important; /* Custom height for the button */
+            font-size: 18px !important; /* Controls the font size of the button */
+            border-radius: 8px !important; /* Custom border radius */
+        }
+
+        @media (max-width: 480px) {
+            .payment-container {
+                padding: 25px 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .btn {
+                font-size: 15px;
+                padding: 12px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="payment-container">
+        <h1>Pay ₹{{ amount }}</h1>
+
+        <!-- Razorpay Payment Button Container -->
+        <div class="razorpay-button-container">
+            <form method="POST" action="{{ callback_url }}">
+                <script
+                    src="https://checkout.razorpay.com/v1/checkout.js"
+                    data-key="{{ razorpay_key }}"
+                    data-amount="{{ amount }}"
+                    data-currency="{{ currency }}"
+                    data-order_id="{{ order_id }}"
+                    data-buttontext="Pay with Razorpay"
+                    data-name="Shopway"
+                    data-description="Transaction"
+                    data-prefill.name="Eyan"
+                    data-prefill.email="eyan@example.com"
+                    data-theme.color="#F37254">
+                </script>
+            </form>
+        </div>
+
+        <!-- Cash on Delivery Option -->
+        <form method="POST" action="{% url 'cod_order' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary">Cash on Delivery</button>
+        </form>
+    </div>
+</body>
+</html>

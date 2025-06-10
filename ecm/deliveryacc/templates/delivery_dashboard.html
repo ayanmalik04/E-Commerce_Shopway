@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        p {
+            text-align: center;
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        a {
+            text-align: center;
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            width: fit-content;
+            border-radius: 5px;
+            font-size: 1.1em;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+
+        .order-container {
+            width: 80%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-container ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .order-container ul li {
+            background: #f8f8f8;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn-delivered {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .btn-delivered:hover {
+            background-color: #218838;
+        }
+
+        .empty-message {
+            text-align: center;
+            font-size: 1.2em;
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            .order-container {
+                width: 95%;
+                padding: 15px;
+            }
+
+            a {
+                width: 90%;
+                padding: 12px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Hi Delivery Boys</h1>
+    <p>Welcome, {{ useremp }}</p>
+    <a href="{% url 'delivery_logout' %}">Logout</a>
+
+    <!-- Pending Orders -->
+    <h2>Pending Orders</h2>
+
+    {% if pending_orders %}
+    {% for order in pending_orders %}
+    <div class="order-container">
+        <h3>Order ID: {{ order.payment.order_id }}</h3>
+        <p><strong>User:</strong> {{ order.user.username }}</p>
+        <p><strong>Region:</strong> {{ order.user.region }}</p>
+        <p><strong>Total:</strong> ₹{{ order.total_price }}</p>
+        <p><strong>Payment Status:</strong> {{ order.payment.status }}</p>
+        <p><strong>Delivery Status:</strong> {{ order.delivery_status }}</p>
+
+        <h4>Items:</h4>
+        <ul>
+            {% for item in order.order_items.all %}
+            <li>{{ item.product.pname }} - Qty: {{ item.quantity }} - ₹{{ item.product.pprice }}</li>
+            {% endfor %}
+        </ul>
+
+        <form action="{% url 'mark_delivered' order.id %}" method="post">
+            {% csrf_token %}
+            <button class="btn-delivered" type="submit">Mark as Delivered</button>
+        </form>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="empty-message">No pending orders found.</p>
+    {% endif %}
+
+    <!-- Return approval section -->
+    <h2>Return Requests</h2>
+
+    {% with unapproved_returns=return_orders|dictsort:"id" %}
+    {% if unapproved_returns %}
+    {% for order in unapproved_returns %}
+    {% if not order.is_return_approved %}
+    <div class="order-container">
+        <h3>Return Request for Order ID: {{ order.payment.order_id }}</h3>
+        <p><strong>User:</strong> {{ order.user.username }}</p>
+        <p><strong>Total:</strong> ₹{{ order.total_price }}</p>
+        <form method="post" action="{% url 'approve_return' order.id %}">
+            {% csrf_token %}
+            <button class="btn-delivered" type="submit">Approve Return</button>
+        </form>
+    </div>
+    {% endif %}
+    {% empty %}
+    <p class="empty-message">No return taking requests found.</p>
+    {% endfor %}
+    {% else %}
+    <p class="empty-message">No return taking requests found.</p>
+    {% endif %}
+    {% endwith %}
+
+
+</body>
+
+</html>

@@ -1,0 +1,593 @@
+{% include 'header.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"
+        integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+    <style>
+        .about-section {
+            background: url("{% static 'images/shoppingtrolley.jpg' %}") no-repeat center center/cover;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            /* 👈 Align to the left */
+            color: rgb(27, 25, 25);
+            position: relative;
+            padding-left: 5%;
+            /* 👈 Optional spacing from the left edge */
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: left;
+            /* 👈 Align text to the left */
+        }
+
+
+        .btn-custom {
+            background-color: transparent;
+            color: #0c0c0c;
+            font-weight: bold;
+            padding: 12px 28px;
+            font-size: 1.2rem;
+            border: 2px solid #060606;
+            border-radius: 50px;
+            transition: all 0.3s ease-in-out;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-custom:hover {
+            background-color: #ffcc00;
+            color: #000;
+            border-color: #ffaa00;
+        }
+
+        #chatContainer {
+            width: 400px;
+            height: 500px;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+        }
+
+        .chat-header {
+            padding: 10px;
+            background-color: #343a40;
+            color: #e7dddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        #chatott {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        /* Bot and User Text Alignments */
+        .bottext {
+            text-align: left;
+            /* Align bot responses to the left */
+            margin-bottom: 10px;
+        }
+
+        .userText {
+            text-align: right;
+            /* Align user responses to the right */
+            margin-bottom: 10px;
+        }
+
+        .bottext span,
+        .userText span {
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 15px;
+            margin: 5px 0;
+        }
+
+        .bottext span {
+            background-color: #ececec;
+            max-width: 80%;
+        }
+
+        .userText span {
+            background-color: #dcf8c6;
+            max-width: 80%;
+        }
+
+        .product-marquee-section {
+            overflow: hidden;
+            white-space: nowrap;
+            width: 100%;
+            background-color: #f9f9f9;
+            padding: 20px 0;
+        }
+
+        .product-marquee {
+            display: flex;
+            animation: scroll-left 20s linear infinite;
+        }
+
+        .product-marquee img {
+            width: 200px;
+            /* Fixed width */
+            height: 300px;
+            /* Fixed height */
+            object-fit: cover;
+            /* Ensures the image fills the box */
+            margin-right: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .product-marquee img:hover {
+            transform: scale(1.05);
+        }
+
+        @keyframes scroll-left {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+
+        @media (max-width: 768px) {
+
+            .product-marquee img {
+                width: 35vw;
+                height: 35vw;
+                margin-right: 15px;
+            }
+
+            .about-section {
+                height: 40vh;
+                padding: 3rem 1rem;
+                text-align: left;
+                /* Ensure text is aligned to the left */
+                justify-content: flex-start;
+                /* Align content to the top/left */
+            }
+
+            .content {
+                text-align: left;
+                /* Align text to the left */
+                margin-left: 1rem;
+                /* Shift content left */
+            }
+
+            .content h1 {
+                font-size: 1rem;
+            }
+
+            .content p {
+                font-size: 0.8rem;
+            }
+
+            .btn-custom {
+                font-size: 0.7rem;
+                padding: 8px 20px;
+                border-radius: 40px;
+                margin-left: 1rem;
+                /* Move button more left */
+            }
+
+            .btn-custom:hover {
+                background-color: #ffcc00;
+                color: #000;
+                border-color: #ffaa00;
+            }
+
+            #chatContainer {
+                width: 70%;
+                height: 60vh;
+                right: 0;
+                bottom: 0;
+                border-radius: 0;
+                z-index: 1050;
+            }
+
+            #openChatBtn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+                bottom: 15px;
+                right: 15px;
+            }
+
+            .chat-header {
+                font-size: 1rem;
+                padding: 10px;
+            }
+
+            #userMessageInput input {
+                font-size: 0.9rem;
+            }
+
+            #questions button {
+                font-size: 0.8rem;
+                margin: 5px 3px;
+            }
+
+            .bottext span,
+            .userText span {
+                font-size: 0.9rem;
+                padding: 6px 10px;
+            }
+        }
+
+
+        @media (max-width: 480px) {
+            .product-marquee img {
+                width: 45vw;
+                height: 45vw;
+                margin-right: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="about-section" id="aboutt">
+        <div class="overlay"></div>
+        <div class="content">
+            <h1 class="display-4">Welcome to Shop</h1>
+            <p class="lead">Discover the best products at amazing prices!</p>
+            <br>
+            <a href="{% url 'dashboard' %}" class=" btn-custom">Click Here</a>
+        </div>
+    </div>
+
+    <!-- Product Marquee Section -->
+    <div class="product-marquee-section" id="shop">
+        <div class="product-marquee">
+            <img src="{% static 'images/bread.png' %}" alt="Product 1">
+            <img src="{% static 'images/rolexxx.jpg' %}" alt="Product 2">
+            <img src="{% static 'images/butter.jpg' %}" alt="Product 3">
+            <img src="{% static 'images/basmati rice.png' %}" alt="Product 4">
+            <img src="{% static 'images/oil.jpg' %}" alt="Product 5">
+            <img src="{% static 'images/Milk.webp' %}" alt="Product 6">
+            <img src="{% static 'images/mobile.webp' %}" alt="Product 7">
+
+            <!-- Add more product images as needed -->
+
+
+            <img src="{% static 'images/bread.png' %}" alt="Product 1">
+            <img src="{% static 'images/rolexxx.jpg' %}" alt="Product 2">
+            <img src="{% static 'images/butter.jpg' %}" alt="Product 3">
+            <img src="{% static 'images/basmati rice.png' %}" alt="Product 4">
+            <img src="{% static 'images/oil.jpg' %}" alt="Product 5">
+            <img src="{% static 'images/Milk.webp' %}" alt="Product 6">
+            <img src="{% static 'images/mobile.webp' %}" alt="Product 7">
+
+        </div>
+    </div>
+
+    <br>
+
+    <!-- Map & Contact Form -->
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-md-6">
+                <div class="card shadow-lg">
+                    <div class="card-body">
+                        <h4 class="text-center text-dark">Our Location</h4>
+                        <iframe class="w-100 rounded shadow" height="300"
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3373.4852056808704!2d72.82417522334791!3d19.0616136567096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c96bda2c82cd%3A0xb264afc7c14ea246!2sCarter%20Rd%2C%20Bandra%20West%2C%20400050!5e1!3m2!1sen!2sin!4v1741436325196!5m2!1sen!2sin"
+                            style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card shadow-lg">
+                    <div class="card-body">
+                        <h2 class="text-center text-primary">Contact Form</h2>
+                        <form method="post" action="" id="contact-form">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Your Name</label>
+                                <input type="text" class="form-control" id="name" name="name" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Your Email</label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Your Message</label>
+                                <textarea class="form-control" id="message" name="message" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Chat Toggle Button -->
+    <button id="openChatBtn" class="btn btn-warning rounded-circle"
+        style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; width: 60px; height: 60px;">
+        💬
+    </button>
+
+    <!-- Chat Container -->
+    <div id="chatContainer" style="display: none;">
+        <div class="chat-header">
+            <strong>Ask a Question</strong>
+            <span id="closeChatBtn" style="cursor:pointer;">&times;</span>
+        </div>
+        <div id="chatott">
+            <p class="bottext"><span>Hi 👋 Click a question below or type your own!</span></p>
+        </div>
+        <div id="questions">
+            <!-- Dynamically render predefined questions -->
+            {% for q in questions %}
+            <button class="btn btn-outline-primary btn-sm question-btn" onclick="askQuestion('{{ q }}')">{{ q
+                }}</button>
+            {% endfor %}
+        </div>
+
+        <!-- Text Input for Custom Question -->
+        <div id="userMessageInput">
+            <input type="text" id="userTextInput" placeholder="Type your question..." class="form-control mt-3">
+            <button id="sendMessageBtn" class="btn btn-primary mt-2 w-100">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Function to send the question and get an answer from the bot
+        function askQuestion(question) {
+            console.log("User clicked: ", question);  // Debugging line
+            $('#chatott').append("<p class='userText'><span>" + question + "</span></p>");
+            $('#typingIndicator').show();  // Show typing indicator
+
+            // Sending the question via GET request to the backend
+            $.get("{% url 'get_answer' %}", { question: question }, function (data) {
+                $('#typingIndicator').hide();  // Hide typing indicator
+                $('#chatott').append("<p class='bottext'><span>" + data.answer + "</span></p>");
+                $('#chatott').scrollTop($('#chatott')[0].scrollHeight);
+            });
+        }
+
+        // Toggle chat visibility (open and close buttons)
+        $('#openChatBtn').click(function () {
+            $('#chatContainer').fadeIn();
+            $(this).hide();
+        });
+
+        $('#closeChatBtn').click(function () {
+            $('#chatContainer').fadeOut();
+            $('#openChatBtn').show();
+        });
+
+        // Send custom question when the user clicks the "Send" button
+        $('#sendMessageBtn').click(function () {
+            var question = $('#userTextInput').val();
+            if (question) {
+                askQuestion(question);  // Ask the question
+                $('#userTextInput').val('');  // Clear the input field
+            }
+        });
+    </script>
+
+
+    <script>
+        const conversationTree = {
+            "start": {
+                "message": "Hi! How can I help you today?",
+                "options": {
+                    "Order Information": "order_info",
+                    "Profile Settings": "profile",
+                    "Cart Items": "cart",
+                    "Payment Options": "payment",
+                    "Offers and Discounts": "offers",
+                    "Contact Support": "support"
+                }
+            },
+
+            // === Order Information ===
+            "order_info": {
+                "message": "Please choose what you'd like to know about your order.",
+                "options": {
+                    "Track my order": "track_order",
+                    "Cancel my order": "cancel_order",
+                    "Return a product": "return_product"
+                }
+            },
+            "track_order": {
+                "message": "What would you like to track?",
+                "options": {
+                    "Delivery status": "delivery_status",
+                    "Return status": "return_status"
+                }
+            },
+            "cancel_order": {
+                "message": "Please Return After Recieved.Thankyou"
+            },
+            "return_product": {
+                "message": "Please select a reason for return.",
+                "options": {
+                    "Received damaged item": "damaged",
+                    "Changed my mind": "mind_change",
+                    "Wrong item received": "wrong_item"
+                }
+            },
+            "delivery_status": {
+                "message": "Please check on Order Page to Know More."
+            },
+            "return_status": {
+                "message": "Please check on Order Page to Know More."
+            },
+            "damaged": {
+                "message": "Sorry about that! We'll initiate your return right away. Please Apply for Return"
+            },
+            "mind_change": {
+                "message": "Okay, please note that return shipping may apply."
+            },
+            "wrong_item": {
+                "message": "We apologize. We’ll arrange a replacement immediately. Please Apply for Return ."
+            },
+
+            // === Profile Settings ===
+            "profile": {
+                "message": "Here are some profile options you can manage:",
+                "options": {
+                    "Update my address": "update_address",
+                    "Change my password": "change_password",
+                    "View my orders": "view_orders"
+                }
+            },
+            "update_address": {
+                "message": "Please go to your profile > address section to update your info."
+            },
+            "change_password": {
+                "message": "Visit the account settings page to change your password securely."
+            },
+            "view_orders": {
+                "message": "Visit Order Page to know more"
+            },
+
+            // === Cart Items ===
+            "cart": {
+                "message": "Here's what you can do with your cart:",
+                "options": {
+                    "View cart items": "view_cart",
+                    "Remove an item": "remove_item",
+                    "Apply a coupon": "apply_coupon"
+                }
+            },
+            "view_cart": {
+                "message": "You can view your cart in Upper Middle Section"
+            },
+            "remove_item": {
+                "message": "Select an item in your cart to remove it."
+            },
+            "apply_coupon": {
+                "message": "No Coupon till now , thank you"
+            },
+
+            // === Payment Options ===
+            "payment": {
+                "message": "Select a payment-related option:",
+                "options": {
+                    "Available payment methods": "payment_methods",
+                    "Check payment status": "payment_status",
+                    "Issue with payment": "payment_issue"
+                }
+            },
+            "payment_methods": {
+                "message": "We support UPI, Credit/Debit Cards, Net Banking, and Cash on Delivery."
+            },
+            "payment_status": {
+                "message": "Check Your Order Page to know more"
+            },
+            "payment_issue": {
+                "message": "If your payment failed but money was deducted, it will be refunded within 5-7 days."
+            },
+
+            // === Offers ===
+            "offers": {
+                "message": "Here are some current promotions:",
+                "options": {
+                    "View current offers": "current_offers",
+                    "Apply coupon": "apply_coupon"
+                }
+            },
+            "current_offers": {
+                "message": "Visit [Offers Page] to view all running discounts."
+            },
+
+            // === Support ===
+            "support": {
+                "message": "You can reach our support team via:",
+                "options": {
+                    "Live chat": "live_chat",
+                    "Email support": "email_support",
+                    "Call support": "call_support"
+                }
+            },
+            "live_chat": {
+                "message": "Our agents are online. Click here to start a live chat."
+            },
+            "email_support": {
+                "message": "Email us at support@example.com"
+            },
+            "call_support": {
+                "message": "Call us at 1800-123-4567 (9 AM to 6 PM)"
+            }
+        };
+
+        let currentNode = "start";
+
+        function renderChatNode(nodeKey) {
+            const node = conversationTree[nodeKey];
+            currentNode = nodeKey;
+
+            $('#chatott').append(`<p class="bottext"><span>${node.message}</span></p>`);
+            $('#chatott').scrollTop($('#chatott')[0].scrollHeight);
+
+            $('#questions').empty();
+
+            if (node.options) {
+                Object.entries(node.options).forEach(([label, nextKey]) => {
+                    $('#questions').append(
+                        `<button class="btn btn-outline-primary btn-sm m-1" onclick="handleUserChoice('${label}', '${nextKey}')">${label}</button>`
+                    );
+                });
+            } else {
+                // Terminal node - add "Want to know more?" and "No, thanks" buttons
+                $('#questions').append(`
+            <button class="btn btn-success btn-sm m-1" onclick="handleUserChoice('Want to know more?', 'start')">Want to know more?</button>
+            <button class="btn btn-secondary btn-sm m-1" onclick="endConversation()">No, thanks</button>
+        `);
+            }
+        }
+
+        function handleUserChoice(label, nextKey) {
+            $('#chatott').append(`<p class="userText"><span>${label}</span></p>`);
+            renderChatNode(nextKey);
+        }
+
+        function endConversation() {
+            $('#chatott').append(`<p class="bottext"><span>Okay! If you need anything else, feel free to ask. 😊</span></p>`);
+            $('#questions').empty();
+        }
+
+
+        $(document).ready(function () {
+            renderChatNode("start"); // initialize chat
+        });
+    </script>
+
+
+</body>
+
+</html>
+{% include 'footer.html' %}
