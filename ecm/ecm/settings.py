@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3xe17h17bl2c(qsrk0y-$45lw6)ir#bz4o@48f_32jo_vg0-j^
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['e-commerce-shopway.onrender.com']
 
 
 # Application definition
