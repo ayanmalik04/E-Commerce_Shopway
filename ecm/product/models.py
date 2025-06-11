@@ -74,7 +74,7 @@ class OrderItem(models.Model):
 
 from django.utils.html import format_html
 class SalesReport(models.Model):
-    link = models.URLField( max_length=300, default= "http://127.0.0.1:8000/sales/" )
+    link = models.URLField( max_length=300, default= "https://e-commerce-shopway.onrender.com/sales/" )
 
     def report(self):
         return format_html('<a href="{}" target="_blank">Open Report</a>', self.link)
