@@ -15,7 +15,7 @@ urlpatterns = [
     path('cod-order/', views.cod_order, name='cod_order'),
     #path('confirmorder1/<int:order_id>/', views.confirm, name='confirmorder1'),
     path('orderr/<int:payment_ids>/', views.orderr , name='orderr'),
-    path('sales/' , views.sales_report )
+    path('sales/' , views.sales_report , name = 'sales_report'),
 
 
     
